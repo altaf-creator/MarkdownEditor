@@ -36,8 +36,9 @@ Hello, World! MarkdownEditor is a markdown viewer and editor with all of the ess
 ## Installation
 > NOTE: Currently only available for Windows 64-bit
 ### Download from Releases
-Open the shortcut named `MarkdownEditor`  
-or navigate to `/bin/`, then open `MarkdownEditor.exe`
+1. Unzip the file
+2. Open the shortcut named `MarkdownEditor`  
+3. or navigate to `/bin/`, then open `MarkdownEditor.exe`
 
 ### Compile using Visual Studio
 1. Open Visual Studio
