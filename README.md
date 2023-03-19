@@ -46,7 +46,7 @@ or navigate to `/bin/`, then open `MarkdownEditor.exe`
 4. Click "Clone"
 5. Change debugging target to "x64"
 5. Click "▶ MarkdownEditor" to compile
-6. The compiled build will be located at `\bin\x64\Debug\net48\MarkdownEditor.exe`.
+6. The compiled build will be located at `\MarkdownEditor\bin\x64\Debug\net48\MarkdownEditor.exe`.
 
 ## Credits
 - [CefSharp](https://github.com/cefsharp/CefSharp) - chromium wrapper
