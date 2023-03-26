@@ -1,6 +1,6 @@
 # MarkdownEditor - a basic markdown viewer and editor
 
-<img src="https://bnz06pap002files.storage.live.com/y4mk6n9G0Hk7i1LBentxzK8QmNzJs3MvZ6V3GZRFegN8K09xV8DnmLZmAZWYXZnw9y_xK0nfIX45fsyITRXL5J4lbNfpQ-YDnaMcFK0M5gGfInfHefyNrXVTbHQ2dtFSTH3H2uCQTy6lFj-1iKt0Ocoz_m8kDf6yU67ij-uEhsWHJInqWSvC-Gz_mP3zMGABf8M?encodeFailures=1&width=210&height=945" align="right">
+<img src="/MarkdownEditor/icon_markdowneditor.png" width="400px" align="right">
 
 Hello, World! MarkdownEditor is a markdown viewer and editor with all of the essential features.
 > Note: MarkdownEditor is currently only available for Windows (64-bit).
