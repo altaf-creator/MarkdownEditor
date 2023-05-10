@@ -37,6 +37,11 @@ namespace MarkdownEditor
         public string tempPath = Path.GetTempPath() + "markdowneditor_temp.html";
         private string prevTxt;
         public bool isOpened = false;
+        public bool isModified = true;
+
+        private bool isExplorerOpen = true;
+        private bool isSourceOpen = true;
+        private bool isPreviewOpen = true;
 
         public MainWindow()
         {
@@ -143,7 +148,7 @@ namespace MarkdownEditor
 
                 string htmlPath = "file:///" + tempPath;
 
-                if (browser.Address != htmlPath.Replace('\\','/'))
+                if (browser.Address != htmlPath.Replace('\\', '/'))
                 {
                     browser.Load(tempPath);
                 }
@@ -151,19 +156,41 @@ namespace MarkdownEditor
                 {
                     browser.Reload();
                 }
+
                 prevTxt = txtRaw.Text;
             }
 
+            if (isOpened)
+            {
+                isModified = txtRaw.Text != File.ReadAllText(path);
+                Title = Path.GetFileName(path) + " - MarkdownEditor";
+
+                if (isModified)
+                {
+                    Title = Path.GetFileName(path) + "*" + " - MarkdownEditor";
+                }
+                else
+                {
+                    Title = "MarkdownEditor - a basic markdown viewer and editor";
+                }
+            }
+            else
+            {
+                isModified = false;
+            }
+
             string formattedPath = path;
-            
+
             pathTxt.Text = formattedPath.Substring(rootPath.Length);
             browser.LoadError += browser_LoadError;
         }
 
+        // ============================================
+
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             string text = txtRaw.Text;
-            
+
             if (!isOpened)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -174,91 +201,14 @@ namespace MarkdownEditor
                     path = saveFileDialog.FileName;
                     File.WriteAllText(path, text);
                     isOpened = true;
+                    isModified = false;
+
+                    addListButton(path);
                 }
             }
             else
             {
                 File.WriteAllText(path, text);
-            }
-        }
-
-        private void openBtn_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Markdown Files (*.md)|*.md|Text Files (*.txt)|*.txt|All (*.*)|*.*";
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                path = openFileDialog.FileName;
-                rootPath = "";
-                txtRaw.Text = File.ReadAllText(path);
-
-                var fileButton = new Button();
-                fileButton.Content = Path.GetFileName(path);
-                fileButton.ToolTip = path;
-                fileButton.Click += fileBtn_Click;
-                filePanel.Items.Insert(0, fileButton);
-
-                isOpened = true;
-            }
-        }
-
-        private void exportBtn_Click(object sender, RoutedEventArgs e)
-        {
-            string text = Markdig.Markdown.ToHtml(txtRaw.Text);
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "HTML (*.html)|*.html|Text (*.txt)|*.txt|All (*.*)|*.*";
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                path = saveFileDialog.FileName;
-                File.WriteAllText(path, text);
-            }
-        }
-
-        private void fileBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-            var element = (FrameworkElement)sender;
-            string tooltip = element.ToolTip.ToString();
-
-            txtRaw.Text = File.ReadAllText(tooltip);
-            path = tooltip;
-            isOpened = true;
-        }
-
-        private void clearBtn_Click(object sender, RoutedEventArgs e)
-        {
-            filePanel.Items.Clear();
-        }
-
-        private void openFolderBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new VistaFolderBrowserDialog();
-            dialog.Description = "Select Folder";
-            dialog.UseDescriptionForTitle = true;
-
-            if (dialog.ShowDialog() == true)
-            {
-                path = dialog.SelectedPath;
-                rootPath = dialog.SelectedPath;
-
-                string[] files = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
-
-                filePanel.Items.Clear();
-
-                for (int i = files.Length - 1; i >= 0; i--)
-                {
-                    var fileButton = new Button();
-                    string str = files[i];
-
-                    str = str.Substring(path.Length);
-
-                    fileButton.Content = str;
-                    fileButton.ToolTip = files[i];
-                    fileButton.Click += fileBtn_Click;
-                    filePanel.Items.Insert(0, fileButton);
-                }
             }
         }
 
@@ -272,13 +222,195 @@ namespace MarkdownEditor
             {
                 path = saveFileDialog.FileName;
                 File.WriteAllText(path, text);
+
+                addListButton(path);
             }
 
         }
 
+        private void openBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isModified)
+            {
+                var result = MessageBox.Show("There are unsaved changes. Are you sure you want to open another file?", "Unsaved Changes", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    openFileDialog.Filter = "Markdown Files (*.md)|*.md|Text Files (*.txt)|*.txt|All (*.*)|*.*";
+
+                    if (openFileDialog.ShowDialog() == true)
+                    {
+                        path = openFileDialog.FileName;
+                        rootPath = "";
+                        txtRaw.Text = File.ReadAllText(path);
+
+                        addListButton(path);
+
+                        isOpened = true;
+                    }
+                }
+            }
+            else
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Markdown Files (*.md)|*.md|Text Files (*.txt)|*.txt|All (*.*)|*.*";
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    path = openFileDialog.FileName;
+                    rootPath = "";
+                    txtRaw.Text = File.ReadAllText(path);
+
+                    addListButton(path);
+
+                    isOpened = true;
+                }
+            }
+        }
+
+        private void exportBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string text = Markdig.Markdown.ToHtml(txtRaw.Text);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "HTML (*.html)|*.html|Text (*.txt)|*.txt|All (*.*)|*.*";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                File.WriteAllText(saveFileDialog.FileName, text);
+            }
+        }
+
+        private void fileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isModified)
+            {
+                var result = MessageBox.Show("There are unsaved changes. Are you sure you want to open another file?", "Unsaved Changes", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    var element = (FrameworkElement)sender;
+                    string tooltip = element.ToolTip.ToString();
+
+                    txtRaw.Text = File.ReadAllText(tooltip);
+                    path = tooltip;
+                    isOpened = true;
+                }
+            }
+            else
+            {
+                var element = (FrameworkElement)sender;
+                string tooltip = element.ToolTip.ToString();
+
+                txtRaw.Text = File.ReadAllText(tooltip);
+                path = tooltip;
+                isOpened = true;
+            }
+        }
+
+        private void clearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            filePanel.Items.Clear();
+        }
+
+        private void openFolderBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isModified)
+            {
+                var result = MessageBox.Show("There are unsaved changes. Are you sure you want to open another file?", "Unsaved Changes", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    var dialog = new VistaFolderBrowserDialog();
+                    dialog.Description = "Select Folder";
+                    dialog.UseDescriptionForTitle = true;
+
+                    if (dialog.ShowDialog() == true)
+                    {
+                        path = dialog.SelectedPath;
+                        rootPath = dialog.SelectedPath;
+
+                        string[] files = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
+
+                        filePanel.Items.Clear();
+
+                        for (int i = files.Length - 1; i >= 0; i--)
+                        {
+                            string str = files[i];
+
+                            str = str.Substring(path.Length);
+
+                            addListButton(files[i]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var dialog = new VistaFolderBrowserDialog();
+                dialog.Description = "Select Folder";
+                dialog.UseDescriptionForTitle = true;
+
+                if (dialog.ShowDialog() == true)
+                {
+                    path = dialog.SelectedPath;
+                    rootPath = dialog.SelectedPath;
+
+                    string[] files = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
+
+                    filePanel.Items.Clear();
+
+                    for (int i = files.Length - 1; i >= 0; i--)
+                    {
+                        string str = files[i];
+
+                        str = str.Substring(path.Length);
+
+                        addListButton(files[i]);
+                    }
+                }
+            }
+        }
+
+        private void newBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isModified)
+            {
+                var result = MessageBox.Show("There are unsaved changes. Are you sure you want to make a new file?", "Unsaved Changes", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    path = "";
+                    rootPath = "";
+                    txtRaw.Text = "";
+                    isOpened = false;
+                }
+            }
+            else
+            {
+                path = "";
+                rootPath = "";
+                txtRaw.Text = "";
+                isOpened = false;
+            }
+        }
+
+        private void aboutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Window window = new AboutWindow();
+            window.Show();
+        }
+
+        // ============================================
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             File.Delete(tempPath);
+
+            if (isModified)
+            {
+                var result = MessageBox.Show("There are unsaved changes. Are you sure you want to quit?", "Unsaved Changes", MessageBoxButton.YesNo);
+                if (result != MessageBoxResult.Yes)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
 
         public void browser_LoadError(object sender, EventArgs e)
@@ -286,10 +418,63 @@ namespace MarkdownEditor
             browser.Load(tempPath);
         }
 
-        private void aboutBtn_Click(object sender, RoutedEventArgs e)
+        void addListButton(string filePath)
         {
-            Window window = new AboutWindow();
-            window.Show();
+            var fileButton = new Button();
+            fileButton.Content = Path.GetFileName(filePath);
+            fileButton.ToolTip = filePath;
+            fileButton.Click += fileBtn_Click;
+            filePanel.Items.Insert(0, fileButton);
+        }
+
+        // ============================================
+
+        private void explorerWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isExplorerOpen)
+            {
+                fileColumn.Width = new GridLength(0);
+                explorerWindowBtn.Foreground = System.Windows.Media.Brushes.Gray;
+                isExplorerOpen = false;
+            }
+            else
+            {
+                fileColumn.Width = new GridLength(300);
+                explorerWindowBtn.Foreground = System.Windows.Media.Brushes.LightSkyBlue;
+                isExplorerOpen = true;
+            }
+        }
+
+        private void mainWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isSourceOpen)
+            {
+                mainColumn.Width = new GridLength(0);
+                mainWindowBtn.Foreground = System.Windows.Media.Brushes.Gray;
+                isSourceOpen = false;
+            }
+            else
+            {
+                mainColumn.Width = new GridLength(1, GridUnitType.Star);
+                mainWindowBtn.Foreground = System.Windows.Media.Brushes.LightSkyBlue;
+                isSourceOpen = true;
+            }
+        }
+
+        private void previewWindowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (isPreviewOpen)
+            {
+                previewColumn.Width = new GridLength(0);
+                previewWindowBtn.Foreground = System.Windows.Media.Brushes.Gray;
+                isPreviewOpen = false;
+            }
+            else
+            {
+                previewColumn.Width = new GridLength(1, GridUnitType.Star);
+                previewWindowBtn.Foreground = System.Windows.Media.Brushes.LightSkyBlue;
+                isPreviewOpen = true;
+            }
         }
     }
 }

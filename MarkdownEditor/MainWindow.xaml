@@ -20,19 +20,28 @@
         <Button Name="saveBtn" Margin="10,10,0,0" Width="28" Click="saveBtn_Click" Padding="0" ToolTip="Save">💾</Button>
         <Button Name="saveAsBtn" Margin="43,10,0,0" Width="28" Padding="0" ToolTip="Save As" Click="saveAsBtn_Click">
             <Button.Foreground>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveCaptionColorKey}}"/>
+                <SolidColorBrush Color="LightSkyBlue"/>
             </Button.Foreground> 💾
         </Button>
+        <Button Name="newBtn" Margin="109,10,0,0" Width="28" Click="newBtn_Click" FontSize="15" Padding="0" ToolTip="New Markdown File">📄</Button>
         <Button Name="exportBtn" Margin="76,10,0,0" Width="28" Click="exportBtn_Click" FontSize="15" Padding="0" ToolTip="Export to HTML">📤</Button>
-        <Button Name="openBtn" Margin="109,10,0,0" Width="28" Click="openBtn_Click" Padding="0" ToolTip="Open File">📂</Button>
-        <Button Name="openFolderBtn" Margin="142,10,0,0" Width="28" Padding="0" ToolTip="Open Folder" Click="openFolderBtn_Click">🗃️</Button>
+        <Button Name="openBtn" Margin="142,10,0,0" Width="28" Click="openBtn_Click" Padding="0" ToolTip="Open File">📂</Button>
+        <Button Name="openFolderBtn" Margin="175,10,0,0" Width="28" Padding="0" ToolTip="Open Folder" Click="openFolderBtn_Click">🗃️</Button>
+
+        <Button Name="previewWindowBtn" Margin="0,10,53,0" Width="28" Padding="0" ToolTip="Toggle Preview" HorizontalAlignment="Right" Click="previewWindowBtn_Click" Foreground="LightSkyBlue">🌐
+        </Button>
+        <Button Name="mainWindowBtn" Margin="0,10,86,0" Width="28" Padding="0" ToolTip="Toggle Markdown Source" HorizontalAlignment="Right" Click="mainWindowBtn_Click" Foreground="LightSkyBlue">.md
+        </Button>
+        <Button Name="explorerWindowBtn" Margin="0,10,119,0" Width="28" Padding="0" ToolTip="Toggle 'Open Folder'" HorizontalAlignment="Right" Click="explorerWindowBtn_Click" Foreground="LightSkyBlue">📂
+        </Button>
+
         <Button Name="aboutBtn" Margin="0,10,10,0" Width="28" Padding="0" ToolTip="About" HorizontalAlignment="Right" FontSize="18" FontWeight="Bold" Click="aboutBtn_Click">i</Button>
 
         <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="300" Name="fileColumn"/>
+                <ColumnDefinition Name="mainColumn" />
+                <ColumnDefinition Name="previewColumn" />
             </Grid.ColumnDefinitions>
 
             <ScrollViewer Margin="10, 32, 5, 47" VerticalScrollBarVisibility="Auto">

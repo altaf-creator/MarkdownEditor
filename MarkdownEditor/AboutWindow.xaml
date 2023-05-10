@@ -20,7 +20,7 @@
         <ItemsControl Grid.Column="0">
             <Image Source="icon_markdowneditor.png" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="30"/>
             <TextBlock HorizontalAlignment="Center" FontWeight="Bold" FontSize="22">MarkdownEditor</TextBlock>
-            <TextBlock HorizontalAlignment="Center" FontSize="18" Foreground="LightGray">v0.1</TextBlock>
+            <TextBlock HorizontalAlignment="Center" FontSize="18" Foreground="LightGray" Text="v0.2"/>
             <TextBlock HorizontalAlignment="Center" FontSize="16" Foreground="LightGray">
                 <Hyperlink NavigateUri="https://github.com/altaf-creator/MarkdownEditor" Foreground="LightBlue" RequestNavigate="Hyperlink_RequestNavigate">
                     github.com/altaf-creator/<LineBreak />MarkdownEditor
@@ -64,8 +64,8 @@
         </ItemsControl>
             
         <TextBlock FontSize="16" Foreground="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="20" Grid.Column="1">
-                <Hyperlink NavigateUri="https://mit-license.org/" Foreground="LightBlue" RequestNavigate="Hyperlink_RequestNavigate">
-                    View License
+                <Hyperlink NavigateUri="https://altaf.mit-license.org/" Foreground="LightBlue" RequestNavigate="Hyperlink_RequestNavigate">
+                    Licensed under the MIT License
                 </Hyperlink>
         </TextBlock>
     </Grid>
